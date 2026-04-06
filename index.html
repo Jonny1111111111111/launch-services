@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>godid242 — I'll build your launch</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #1a1a1a;
+    --green: #00ff88;
+    --green-dim: #00cc6a;
+    --green-glow: rgba(0,255,136,0.12);
+    --text: #b0b0b0;
+    --text-dim: #555;
+    --white: #f0f0f0;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  .noise {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 999;
+  }
+
+  .container { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative; padding: 80px 0;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; top: -200px; right: -200px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, var(--green-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .tag {
+    font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--green); margin-bottom: 32px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .tag::before { content: ''; width: 32px; height: 1px; background: var(--green); }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 6.5vw, 64px);
+    font-weight: 800; color: var(--white); line-height: 1.08;
+    margin-bottom: 28px;
+  }
+  h1 .gr { color: var(--green); }
+
+  .hero-sub {
+    font-size: 14px; color: var(--text);
+    max-width: 520px; margin-bottom: 48px; line-height: 1.8;
+  }
+
+  .cta-row { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-block; padding: 14px 32px;
+    font-family: 'Space Mono', monospace; font-size: 12px;
+    text-decoration: none; letter-spacing: 1.5px; text-transform: uppercase;
+    border: 1px solid var(--green); color: var(--green);
+    transition: all .25s ease; cursor: pointer; background: transparent;
+  }
+  .btn:hover { background: var(--green); color: var(--bg); }
+  .btn.solid { background: var(--green); color: var(--bg); }
+  .btn.solid:hover { background: var(--green-dim); border-color: var(--green-dim); }
+
+  .packages { padding: 100px 0; }
+
+  .section-label {
+    font-family: 'Syne', sans-serif; font-size: 11px;
+    letter-spacing: 5px; text-transform: uppercase;
+    color: var(--green); margin-bottom: 12px;
+  }
+
+  .section-head {
+    font-family: 'Syne', sans-serif; font-size: clamp(22px, 4vw, 36px);
+    font-weight: 700; color: var(--white); margin-bottom: 48px;
+    max-width: 600px;
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 32px 24px; position: relative;
+    transition: border-color .3s ease, transform .3s ease;
+  }
+  .card:hover { border-color: #333; transform: translateY(-2px); }
+  .card.pop { border-color: var(--green); }
+  .card.pop::after {
+    content: '★'; position: absolute; top: 12px; right: 16px;
+    color: var(--green); font-size: 14px;
+  }
+
+  .card-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px;
+  }
+
+  .card-price {
+    font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800;
+    color: var(--white); margin-bottom: 20px;
+  }
+
+  .card ul { list-style: none; margin-bottom: 24px; }
+  .card li {
+    font-size: 13px; padding: 7px 0;
+    border-bottom: 1px solid var(--border); color: var(--text);
+  }
+  .card li::before { content: '— '; color: var(--green); }
+
+  .proof { padding: 80px 0; border-top: 1px solid var(--border); }
+
+  .proof-text {
+    font-size: 13px; color: var(--text-dim); margin-bottom: 32px; max-width: 500px;
+  }
+
+  .proof-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 12px; }
+  .proof-item {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 20px; font-size: 12px;
+  }
+  .proof-item strong { display: block; color: var(--white); font-size: 13px; margin-bottom: 4px; }
+  .proof-item span { color: var(--text-dim); }
+
+  .bottom-cta {
+    padding: 120px 0 80px; text-align: center;
+    border-top: 1px solid var(--border);
+  }
+  .bottom-cta h2 {
+    font-family: 'Syne', sans-serif; font-size: clamp(24px,5vw,44px);
+    font-weight: 800; color: var(--white); margin-bottom: 12px;
+  }
+  .bottom-cta .gr { color: var(--green); }
+  .bottom-cta p { color: var(--text-dim); font-size: 13px; margin-bottom: 36px; }
+
+  .links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+  .links a {
+    color: var(--green); text-decoration: none; font-size: 12px;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    border-bottom: 1px solid transparent; transition: border-color .2s;
+  }
+  .links a:hover { border-color: var(--green); }
+
+  footer {
+    padding: 32px 0; text-align: center;
+    font-size: 10px; color: var(--text-dim); letter-spacing: 1px;
+    border-top: 1px solid var(--border);
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(24px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+  .hero .tag { animation: fadeUp .5s ease both; }
+  .hero h1 { animation: fadeUp .5s ease .08s both; }
+  .hero-sub { animation: fadeUp .5s ease .16s both; }
+  .cta-row { animation: fadeUp .5s ease .24s both; }
+  .card { animation: fadeUp .4s ease both; }
+  .card:nth-child(1) { animation-delay: .1s; }
+  .card:nth-child(2) { animation-delay: .18s; }
+  .card:nth-child(3) { animation-delay: .26s; }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<div class="container">
+  <section class="hero">
+    <div class="tag">@godid242</div>
+    <h1>You handle the token.<br>I'll build <span class="gr">everything else.</span></h1>
+    <p class="hero-sub">Site. Contract. TG bot. Twitter threads. Full launch kit so your project doesn't look like it was thrown together in 5 minutes. Nobody's aping into a token with no website.</p>
+    <div class="cta-row">
+      <a href="https://x.com/godid242" class="btn solid" target="_blank">DM me on X</a>
+    </div>
+  </section>
+
+  <section class="packages" id="packages">
+    <div class="section-label">Packages</div>
+    <div class="section-head">Pick one. DM me. You launch in days, not weeks.</div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="card-name">Starter</div>
+        <div class="card-price">$500</div>
+        <ul>
+          <li>React landing page, deployed</li>
+          <li>ERC-20 or BEP-20 contract</li>
+          <li>1 launch thread for X</li>
+          <li>48hr turnaround</li>
+        </ul>
+      </div>
+
+      <div class="card pop">
+        <div class="card-name">Full Send</div>
+        <div class="card-price">$1,000</div>
+        <ul>
+          <li>Custom site w/ tokenomics & roadmap</li>
+          <li>Contract w/ tax, burn, LP lock</li>
+          <li>TG community bot</li>
+          <li>2 threads — hype + launch day</li>
+          <li>3–5 day delivery</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-name">God Mode</div>
+        <div class="card-price">$2,000</div>
+        <ul>
+          <li>Everything in Full Send</li>
+          <li>TG whale + buy alerts bot</li>
+          <li>1 week of X content</li>
+          <li>Audit report</li>
+          <li>2 weeks support after launch</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="proof">
+    <div class="section-label">Shipped, not pitched</div>
+    <p class="proof-text">All of this is live and deployed. Not concepts. Not "coming soon." Working code you can go check right now.</p>
+    <div class="proof-grid">
+      <div class="proof-item">
+        <strong>LiquidSense</strong>
+        <span>DeFi liquidation radar · Base</span>
+      </div>
+      <div class="proof-item">
+        <strong>OpenAudit</strong>
+        <span>AI contract auditor</span>
+      </div>
+      <div class="proof-item">
+        <strong>Solana Agents</strong>
+        <span>Multi-agent system · devnet</span>
+      </div>
+      <div class="proof-item">
+        <strong>0xWork System</strong>
+        <span>9-wallet auto-claimer + TG bot</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="bottom-cta">
+    <h2>Stop overthinking it.<br><span class="gr">Just DM me.</span></h2>
+    <p>I reply fast. We scope it. You launch clean.</p>
+    <div class="links">
+      <a href="https://x.com/godid242" target="_blank">X / Twitter</a>
+      <a href="https://t.me/godid2422" target="_blank">Telegram</a>
+    </div>
+  </section>
+
+  <footer>godid242 · 2026</footer>
+</div>
+</body>
+</html>
